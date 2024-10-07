@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Price Prediction</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        input, button { margin: 5px; }
+        #output { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Car Price Prediction</h1>
+    <form id="prediction-form">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name"><br>
+
+        <label for="year">Yr:</label>
+        <input type="number" id="year" name="year"><br>
+
+        <label for="km_driven">KM:</label>
+        <input type="number" id="km_driven" name="km_driven"><br>
+
+        <label for="fuel">Fuel:</label>
+        <input type="text" id="fuel" name="fuel"><br>
+
+        <label for="owner">Ownr:</label>
+        <input type="text" id="owner" name="owner"><br>
+
+        <label for="mileage">Mile:</label>
+        <input type="number" id="mileage" name="mileage"><br>
+
+        <button type="button" onclick="makePrediction()">Predict Price</button>
+    </form>
+    <div id="output"></div>
+
+    <script>
+        async function makePrediction() {
+            const form = document.getElementById('prediction-form');
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = key === 'year' || key === 'km_driven' || key === 'seats' || key === 'max_power' || key === 'mileage' || key === 'engine' ? Number(value) : value;
+            });
+
+            const response = await fetch('http://127.0.0.1:5001/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify([data]),
+            });
+            const result = await response.json();
+
+            document.getElementById('output').innerText = `Predicted Selling Price: ${result.predictions[0]}`;
+        }
+    </script>
+</body>
+</html>
